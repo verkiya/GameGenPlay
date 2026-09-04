@@ -1,5 +1,4 @@
 import Image from "next/image"
-import { UserButton, OrganizationSwitcher } from "@clerk/nextjs"
 import { auth } from "@clerk/nextjs/server"
 import { 
   Empty, 
@@ -35,12 +34,6 @@ export default async function Page() {
 
   return (
     <div className="flex min-h-svh items-center justify-center bg-[#1A1A1A] p-6 text-zinc-100 dark relative">
-      <div className="absolute top-6 left-6 z-10">
-        <OrganizationSwitcher />
-      </div>
-      <div className="absolute top-6 right-6 z-10">
-        <UserButton />
-      </div>
       <div className="w-full max-w-3xl">
         <Empty className="border-none">
           <EmptyHeader className="max-w-lg mb-4">
