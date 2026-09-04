@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { notFound } from "next/navigation"
 
-import { ChatThread } from "@/components/chat-thread"
+import { GameChat } from "@/components/game-chat"
 import { getGame } from "@/lib/games/queries"
 
 export default async function GamePage({ params }: { params: Promise<{ id: string }> }) {
@@ -14,5 +14,19 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
     notFound()
   }
 
-  return <ChatThread gameId={game.id} initialMessages={game.messages} />
+  return (
+    <GameChat
+      gameId={game.id}
+      initialMessages={game.messages}
+      sandboxId={game.sandboxId}
+      initialSession={
+        game.chatAccessToken
+          ? {
+              publicAccessToken: game.chatAccessToken,
+              lastEventId: game.chatLastEventId ?? undefined,
+            }
+          : undefined
+      }
+    />
+  )
 }
