@@ -1,4 +1,6 @@
 import Image from "next/image"
+import { UserButton } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 import { 
   Empty, 
   EmptyContent, 
@@ -24,9 +26,18 @@ import {
   ArrowUp 
 } from "lucide-react"
 
-export default function Page() {
+export default async function Page() {
+  const { userId, redirectToSignIn } = await auth()
+
+  if (!userId) {
+    return redirectToSignIn()
+  }
+
   return (
-    <div className="flex min-h-svh items-center justify-center bg-[#1A1A1A] p-6 text-zinc-100 dark">
+    <div className="flex min-h-svh items-center justify-center bg-[#1A1A1A] p-6 text-zinc-100 dark relative">
+      <div className="absolute top-6 right-6 z-10">
+        <UserButton />
+      </div>
       <div className="w-full max-w-3xl">
         <Empty className="border-none">
           <EmptyHeader className="max-w-lg mb-4">
