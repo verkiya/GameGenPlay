@@ -1,7 +1,7 @@
 import { Gamepad2, Home } from "lucide-react"
 import Link from "next/link"
 
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 
 export default function NotFound() {
   return (
@@ -22,12 +22,10 @@ export default function NotFound() {
           </p>
         </div>
         
-        <Button asChild className="group mt-4 rounded-full px-6 transition-all">
-          <Link href="/">
-            <Home className="mr-2 size-4 group-hover:animate-bounce" />
-            Back to Spawn
-          </Link>
-        </Button>
+        <Link href="/" className={buttonVariants({ variant: "default", className: "group mt-4 rounded-full px-6 transition-all" })}>
+          <Home className="mr-2 size-4 group-hover:animate-bounce" />
+          Back to Spawn
+        </Link>
       </div>
     </div>
   )
