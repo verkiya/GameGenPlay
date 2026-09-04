@@ -1,30 +1,31 @@
 import { ClerkProvider } from "@clerk/nextjs"
 import { shadcn } from "@clerk/ui/themes"
-import "@clerk/ui/themes/shadcn.css"
-import type { Metadata } from "next"
-import { Outfit, JetBrains_Mono } from "next/font/google"
+import { Fraunces, Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
+import { Metadata } from "next"
 
-const fontSans = Outfit({ subsets: ["latin"], variable: "--font-sans" })
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
-const fontMono = JetBrains_Mono({
+const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
 
+const fontLogo = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-logo",
+})
+
 export const metadata: Metadata = {
   title: {
-    template: "%s | GameGenPlay",
-    default: "GameGenPlay",
+    default: "GameGenPlay — Build 3D games with AI",
+    template: "%s · GameGenPlay",
   },
   description:
-    "Build your own racers, shooters, puzzles and whole worlds using your own words. If you can describe it, you can play it.",
-  icons: {
-    icon: "/logo.svg",
-  },
+    "Describe a game and watch it come to life. GameGenPlay is an agentic three.js game builder that plans the scene, writes the code, and streams playable worlds from plain English.",
 }
 
 export default function RootLayout({
@@ -40,7 +41,8 @@ export default function RootLayout({
         "antialiased",
         fontMono.variable,
         "font-sans",
-        fontSans.variable
+        geist.variable,
+        fontLogo.variable
       )}
     >
       <body>

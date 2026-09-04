@@ -1,14 +1,16 @@
-import * as React from "react"
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { listGames } from "@/lib/games/queries"
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+import React from "react"
+
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const games = await listGames()
+
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        {children}
-      </SidebarInset>
+      <AppSidebar games={games} />
+      <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   )
 }

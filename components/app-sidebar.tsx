@@ -1,13 +1,20 @@
 "use client"
 
-import * as React from "react"
+import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
+import { CoinsIcon, MessageSquareIcon, SquarePenIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
-import { SquarePenIcon, CoinsIcon } from "lucide-react"
 
 import { Empty, EmptyDescription } from "@/components/ui/empty"
+import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import {
   Sidebar,
   SidebarContent,
@@ -22,16 +29,29 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import type { Game } from "@/lib/db/schema"
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  games,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { games: Game[] }) {
   const pathname = usePathname()
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="flex-row items-center justify-between group-data-[collapsible=icon]:justify-center">
-        <Link href="/" className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
-          <Image src="/logo.svg" alt="GameGenPlay" width={20} height={20} className="size-5" />
-          <span className="font-logo text-base font-semibold">GameGenPlay</span>
+        <Link
+          href="/"
+          className="flex items-center gap-2 group-data-[collapsible=icon]:hidden"
+        >
+          <Image
+            src="/logo.svg"
+            alt="GameGenPlay"
+            width={20}
+            height={20}
+            className="size-5"
+          />
+          <span className="font-logo text-base">GameGenPlay</span>
         </Link>
         <SidebarTrigger />
       </SidebarHeader>
@@ -39,7 +59,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton isActive={pathname === "/"} render={<Link href="/" />}>
+              <SidebarMenuButton
+                isActive={pathname === "/"}
+                render={<Link href="/" />}
+              >
                 <SquarePenIcon />
                 <span>New game</span>
               </SidebarMenuButton>
@@ -49,18 +72,83 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupLabel>Recents</SidebarGroupLabel>
           <SidebarGroupContent>
-            <Empty className="border-dashed border p-2 group-data-[collapsible=icon]:hidden">
-              <EmptyDescription className="text-xs">
-                Your games will live here.
-              </EmptyDescription>
-            </Empty>
+            {games.length === 0 ? (
+              <Empty className="border p-2 group-data-[collapsible=icon]:hidden">
+                <EmptyDescription className="text-xs">
+                  Your games will live here.
+                </EmptyDescription>
+              </Empty>
+            ) : (
+              <SidebarMenu className="group-data-[collapsible=icon]:hidden">
+                {games.map((game) => (
+                  <SidebarMenuItem key={game.id}>
+                    <SidebarMenuButton
+                      isActive={pathname === `/games/${game.id}`}
+                      render={<Link href={`/games/${game.id}`} />}
+                    >
+                      <span>{game.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            )}
+            <SidebarMenu className="hidden group-data-[collapsible=icon]:flex">
+              <SidebarMenuItem>
+                <Popover>
+                  <PopoverTrigger
+                    render={
+                      <SidebarMenuButton>
+                        <MessageSquareIcon />
+                        <span>Recents</span>
+                      </SidebarMenuButton>
+                    }
+                  />
+                  <PopoverContent
+                    side="right"
+                    align="start"
+                    className="w-56 gap-1.5 p-1.5"
+                  >
+                    <PopoverHeader className="px-2 pt-1">
+                      <PopoverTitle className="text-xs text-muted-foreground">
+                        Recents
+                      </PopoverTitle>
+                    </PopoverHeader>
+                    {games.length === 0 ? (
+                      <Empty className="border p-2">
+                        <EmptyDescription className="text-xs">
+                          Your games will live here.
+                        </EmptyDescription>
+                      </Empty>
+                    ) : (
+                      <SidebarMenu>
+                        {games.map((game) => (
+                          <SidebarMenuItem key={game.id}>
+                            <PopoverClose
+                              nativeButton={false}
+                              render={
+                                <SidebarMenuButton
+                                  isActive={pathname === `/games/${game.id}`}
+                                  render={<Link href={`/games/${game.id}`} />}
+                                >
+                                  <span>{game.title}</span>
+                                </SidebarMenuButton>
+                              }
+                            />
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    )}
+                  </PopoverContent>
+                </Popover>
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton render={<Link href="#" />}>
+            <SidebarMenuButton>
               <CoinsIcon />
               <span>Credits</span>
             </SidebarMenuButton>
@@ -73,7 +161,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               appearance={{
                 elements: {
                   rootBox: "w-full! max-w-full",
-                  organizationSwitcherTrigger: "w-full! max-w-full justify-between!",
+                  organizationSwitcherTrigger:
+                    "w-full! max-w-full justify-between!",
                   organizationPreview: "min-w-0",
                   organizationPreviewTextContainer: "min-w-0",
                   organizationPreviewMainIdentifier: "truncate",
