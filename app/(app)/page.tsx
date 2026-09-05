@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import Image from "next/image"
 
 import { NewGameComposer } from "@/components/new-game-composer"
-import { AuthBackground } from "@/components/auth-background"
+import { MainBackground } from "@/components/main-background"
 import {
   Empty,
   EmptyContent,
@@ -17,7 +17,7 @@ export default async function Page() {
 
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center gap-6 overflow-hidden">
-      <AuthBackground />
+      <MainBackground />
       
       <div className="relative z-10 w-full max-w-3xl px-6">
         <Empty className="flex-none border-zinc-800/50 bg-zinc-950/40 backdrop-blur-xl">

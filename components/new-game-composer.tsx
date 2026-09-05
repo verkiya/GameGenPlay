@@ -62,11 +62,13 @@ export function NewGameComposer() {
             key={suggestion.label}
             variant="outline"
             size="sm"
-            className="rounded-full font-normal text-muted-foreground"
+            className={`cursor-pointer rounded-full font-normal text-muted-foreground transition-colors ${
+              (suggestion as any).color || ""
+            }`}
             disabled={isPending}
             onClick={() => handleSuggestion(suggestion.prompt)}
           >
-            <suggestion.icon />
+            <suggestion.icon className="mr-1 h-4 w-4" />
             {suggestion.label}
           </Button>
         ))}

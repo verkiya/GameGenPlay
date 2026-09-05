@@ -3,7 +3,7 @@
 import * as Sentry from "@sentry/nextjs"
 import { useEffect, useRef, useState } from "react"
 
-import { Spinner } from "@/components/ui/spinner"
+import { ThreeLoader } from "@/components/three-loader"
 
 type Preview =
   | { status: "loading" }
@@ -217,9 +217,11 @@ export function ChatPreview({
 
   if (preview.status === "loading") {
     return (
-      <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
-        <Spinner />
-        Starting preview…
+      <div className="flex h-full flex-col items-center justify-center gap-4 bg-zinc-950/50">
+        <ThreeLoader />
+        <div className="flex items-center gap-2 animate-pulse text-sm font-medium tracking-wide text-zinc-400">
+          Starting preview...
+        </div>
       </div>
     )
   }
