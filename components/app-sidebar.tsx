@@ -53,13 +53,13 @@ export function AppSidebar({
         >
           <Image
             src="/logo.svg"
-            alt="Sandbox"
+            alt="GameGenPlay"
             width={20}
             height={20}
             className="size-5"
             style={{ width: "auto", height: "auto" }}
           />
-          <span className="font-logo text-base">Sandbox</span>
+          <span className="font-logo text-base">GameGenPlay</span>
         </Link>
         <SidebarTrigger />
       </SidebarHeader>
