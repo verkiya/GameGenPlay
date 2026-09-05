@@ -1,5 +1,13 @@
 import { additionalFiles } from "@trigger.dev/build/extensions/core";
+import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
 import { defineConfig } from "@trigger.dev/sdk";
+import * as Sentry from "@sentry/nextjs";
+
+Sentry.init({
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  // Node.js environment doesn't need tracesSampleRate for basic error tracking, 
+  // but we can add it if we want to trace background jobs
+});
 
 export default defineConfig({
   project: "proj_atsnienvbfcdzytdpaqz",
@@ -19,6 +27,9 @@ export default defineConfig({
       randomize: true,
     },
   },
+  onFailure: async (payload) => {
+    Sentry.captureException(payload.error);
+  },
   dirs: ["trigger"],
   build: {
     // Nothing imports the sandbox seed files — they are read off disk at
@@ -26,6 +37,13 @@ export default defineConfig({
     // have to be copied into the deployment by hand. They land at the same
     // path relative to the deployment root that they have here, which is what
     // that module resolves them from.
-    extensions: [additionalFiles({ files: ["lib/games/runtime/**/*"] })],
+    extensions: [
+      additionalFiles({ files: ["lib/games/runtime/**/*"] }),
+      sentryEsbuildPlugin({
+        org: "himanshu-verkiya-ej",
+        project: "gamegenplay",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      }),
+    ],
   },
 });

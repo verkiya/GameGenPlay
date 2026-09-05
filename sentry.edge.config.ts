@@ -6,10 +6,16 @@
 import * as Sentry from "@sentry/nextjs"
 
 Sentry.init({
-  dsn: "https://6321d19ff0f2112f03777bcdfac6a07e@o4510577748213760.ingest.us.sentry.io/4512027777302528",
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
+
+  integrations: [
+    Sentry.captureConsoleIntegration({
+      levels: ["error", "warn"], // Capture console.error and console.warn
+    }),
+  ],
 
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
