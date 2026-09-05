@@ -170,7 +170,7 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname === "/learnings"}
-              render={<Link href="/learnings" />}
+              render={<Link href="/learnings" target="_blank" rel="noopener noreferrer" />}
             >
               <BookOpenIcon />
               <span>Learnings</span>
