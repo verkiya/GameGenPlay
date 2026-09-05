@@ -72,9 +72,9 @@ export function ChatThread({
   // persisted under.
   const transport = useTriggerChatTransport<typeof gameChat>({
     task: "game-chat",
-    accessToken: ({ chatId }) => mintChatAccessToken(chatId),
+    accessToken: ({ chatId }) => mintGameChatAccessToken(chatId),
     startSession: ({ chatId, clientData }) =>
-      startChatSession({ chatId, clientData }),
+      startGameChatSession({ chatId, clientData }),
     // What the last turn persisted: the session token and the stream cursor, so
     // a fresh tab reconnects without a round-trip to create a session.
     sessions: initialSession ? { [gameId]: initialSession } : undefined,
