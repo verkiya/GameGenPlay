@@ -97,14 +97,6 @@ The model catalog is the shared contract for the picker, Trigger agent, and pric
 | Identity and billing | Clerk                                             |
 | Monitoring           | Sentry                                            |
 
-## Screenshots
-
-<p align="center">
-  <img src="design/04-games/01.png" alt="GameGenPlay game workspace" width="760" />
-</p>
-
-> Add an authenticated product walkthrough or hosted demo link here when one is available. The repository intentionally does not advertise an unverified deployment URL.
-
 ## Installation
 
 ### Prerequisites
@@ -195,14 +187,6 @@ Before deployment, confirm that Clerk’s production URLs, the Neon database, Da
 - Sandboxes are created before their id is persisted; cleanup searches by game label to collect failures that occur during that gap.
 - A game can finish a started turn after credit reaches zero, avoiding half-written worlds; the next turn is gated.
 - Logs carry useful ids and timings, while prompt and generated-source request bodies are intentionally withheld from Sentry.
-
-## Roadmap
-
-- [ ] Add focused integration coverage for authorization, credit gates, sandbox lifecycle, and preview expiry.
-- [ ] Surface per-turn model cost and latency clearly in the product.
-- [ ] Add sandbox lifecycle dashboards and reconciliation tools for operator workflows.
-- [ ] Expand the seeded 3D runtime and reusable game primitives.
-- [ ] Add an end-to-end deployment/demo workflow once a public environment is available.
 
 ## License
 

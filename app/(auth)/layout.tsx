@@ -34,8 +34,13 @@ export default function AuthLayout({
         {/* Content */}
         <div className="mb-12 max-w-3xl flex-1 flex flex-col justify-center">
           <h1 className="mb-6 text-5xl leading-tight font-bold tracking-tight md:text-7xl drop-shadow-lg">
-            Build 3D games <br />
-            <span className="text-primary">with AI.</span>
+            <span className="animate-text-shimmer bg-[length:300%_100%] bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-300 to-white">
+              Build 3D games
+            </span>
+            <br />
+            <span className="animate-gradient-shift bg-[length:200%_200%] bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-orange-400 to-red-600">
+              with AI.
+            </span>
           </h1>
           <p className="max-w-xl text-xl leading-relaxed text-zinc-300 drop-shadow">
             Describe a game and watch it come to life. GameGenPlay is an agentic
