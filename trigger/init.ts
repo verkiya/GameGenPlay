@@ -24,7 +24,7 @@ Sentry.init({
   // `logger` writes through stdout, so forwarding console would copy the run
   // log into Sentry alongside the structured logs rather than adding anything.
   //
-  // The counterpart to `service.name: "sandbox-web"` in
+  // The counterpart to `service.name: "gamegenplay-browser"` in
   // sentry.server.config.ts — see the note there for why this is a
   // `beforeSendLog` and not a scope attribute. It is what tells a sandbox
   // failure inside a chat turn apart from one behind a preview request, since
@@ -37,7 +37,7 @@ Sentry.init({
       return null
     }
 
-    log.attributes = { ...log.attributes, "service.name": "sandbox-worker" }
+    log.attributes = { ...log.attributes, "service.name": "gamegenplay-worker" }
 
     return log
   },

@@ -1,6 +1,6 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig, globalIgnores } from "eslint/config"
+import nextVitals from "eslint-config-next/core-web-vitals"
+import nextTs from "eslint-config-next/typescript"
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -12,10 +12,17 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Bundled agent skills and their templates are documentation assets, not
+    // application code. Scratch scripts are manual maintenance helpers.
+    ".agents/**",
+    ".claude/**",
+    ".cursor/**",
+    "scratch/**",
+    "sync.cjs",
     // Seed files copied verbatim into each game's sandbox. They are plain
     // browser html/css/js served as-is, not part of this app's source.
     "lib/games/runtime/**",
   ]),
-]);
+])
 
-export default eslintConfig;
+export default eslintConfig

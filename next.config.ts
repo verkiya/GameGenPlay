@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
 
 export default withSentryConfig(nextConfig, {
   org: "enra-r3",
-  project: "sandbox",
+  project: "gamegenplay",
 
   // Build-time secret, used to upload source maps
   authToken: process.env.SENTRY_AUTH_TOKEN,

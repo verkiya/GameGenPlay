@@ -12,12 +12,17 @@
  */
 export const GAME_MODELS = [
   {
-    id: "claude-sonnet-4-5-20250929",
-    name: "Sonnet 4.5",
+    id: "claude-opus-5",
+    name: "Opus 5",
+    tagline: "The most capable builder — best for a game from scratch.",
+  },
+  {
+    id: "claude-sonnet-5",
+    name: "Sonnet 5",
     tagline: "Most of the ability, a good deal faster. Good for iterating.",
   },
   {
-    id: "claude-haiku-4-5-20251001",
+    id: "claude-haiku-4-5",
     name: "Haiku 4.5",
     tagline: "The quickest and cheapest — best for small, specific tweaks.",
   },
@@ -38,7 +43,7 @@ export type GameModelId = (typeof GAME_MODELS)[number]["id"]
  * Every turn today, since nothing sends a choice yet — so this is the model the
  * app actually uses, not a fallback that rarely fires.
  */
-export const DEFAULT_GAME_MODEL_ID: GameModelId = "claude-haiku-4-5-20251001"
+export const DEFAULT_GAME_MODEL_ID: GameModelId = "claude-opus-5"
 
 /**
  * Whether a value names a model this app offers.

@@ -53,7 +53,10 @@ Sentry.init({
       return null
     }
 
-    log.attributes = { ...log.attributes, "service.name": "sandbox-browser" }
+    log.attributes = {
+      ...log.attributes,
+      "service.name": "gamegenplay-browser",
+    }
 
     return log
   },
