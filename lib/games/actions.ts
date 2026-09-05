@@ -3,6 +3,7 @@
 import { anthropic } from "@ai-sdk/anthropic"
 import { auth } from "@clerk/nextjs/server"
 import * as Sentry from "@sentry/nextjs"
+import { eq } from "drizzle-orm"
 import { generateText } from "ai"
 import { refresh } from "next/cache"
 import { redirect } from "next/navigation"
@@ -155,4 +156,24 @@ export async function createGame(prompt: string) {
 
   // `redirect` throws, so nothing may follow it here.
   redirect(`/games/${game.id}`)
+}
+
+export async function renameGame(id: string, newTitle: string) {
+  const { orgId } = await auth()
+  if (!orgId) return
+
+  await db.update(games).set({ title: truncate(newTitle) }).where(eq(games.id, id))
+  refresh()
+}
+
+export async function deleteGame(id: string, active?: boolean) {
+  const { orgId } = await auth()
+  if (!orgId) return
+
+  await db.delete(games).where(eq(games.id, id))
+  refresh()
+
+  if (active) {
+    redirect("/")
+  }
 }
