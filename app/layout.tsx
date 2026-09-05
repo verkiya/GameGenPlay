@@ -21,8 +21,8 @@ const fontLogo = Orbitron({
 
 export const metadata: Metadata = {
   title: {
-    default: "GameGenPlay — Build 3D games with AI",
-    template: "%s · GameGenPlay",
+    default: "GameGenPlay",
+    template: "%s | GameGenPlay",
   },
   description:
     "Describe a game and watch it come to life. GameGenPlay is an agentic three.js game builder that plans the scene, writes the code, and streams playable worlds from plain English.",
