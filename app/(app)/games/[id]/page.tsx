@@ -33,7 +33,9 @@ export default async function GamePage({
         <span className="truncate font-heading text-sm font-medium">
           {game.title}
         </span>
-        <GameMenu gameId={game.id} title={game.title} />
+        <div className="flex items-center gap-0.5">
+          <GameMenu gameId={game.id} title={game.title} renderRenameButton />
+        </div>
       </header>
       <GameChat
         gameId={game.id}

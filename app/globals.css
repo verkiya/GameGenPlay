@@ -100,7 +100,7 @@
     --chart-4: oklch(0.8822 0.0403 298.1792);
     --chart-5: oklch(0.5608 0.1348 42.0584);
     --radius: 0.625rem;
-    --sidebar: oklch(0.9663 0.0080 98.8792);
+    --sidebar: oklch(0.9663 0.02 27.3250);
     --sidebar-foreground: oklch(0.3590 0.0051 106.6524);
     --sidebar-primary: oklch(0.5771 0.2152 27.3250);
     --sidebar-primary-foreground: oklch(0.9881 0 0);
@@ -153,7 +153,7 @@
     --chart-3: oklch(0.2130 0.0078 95.4245);
     --chart-4: oklch(0.3074 0.0516 289.3230);
     --chart-5: oklch(0.5608 0.1348 42.0584);
-    --sidebar: oklch(0.2357 0.0024 67.7077);
+    --sidebar: oklch(0.2357 0.02 25.3313);
     --sidebar-foreground: oklch(0.8074 0.0142 93.0137);
     --sidebar-primary: oklch(0.6368 0.2078 25.3313);
     --sidebar-primary-foreground: oklch(0.9881 0 0);
@@ -199,4 +199,45 @@
   html {
     @apply font-sans;
     }
+}
+
+/* Auth heading animations */
+@keyframes text-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: -100% 50%; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-text-shimmer {
+  animation: text-shimmer 4s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 3s ease-in-out infinite;
+}
+
+@keyframes color-spectrum {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.animate-color-spectrum {
+  animation: color-spectrum 4s linear infinite;
+}
+
+@keyframes border-shimmer {
+  0% { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 8px rgba(168, 85, 247, 0.15); }
+  25% { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 12px rgba(59, 130, 246, 0.2); }
+  50% { border-color: rgba(236, 72, 153, 0.5); box-shadow: 0 0 12px rgba(236, 72, 153, 0.2); }
+  75% { border-color: rgba(34, 211, 238, 0.5); box-shadow: 0 0 12px rgba(34, 211, 238, 0.2); }
+  100% { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 8px rgba(168, 85, 247, 0.15); }
+}
+
+.animate-border-shimmer {
+  animation: border-shimmer 2.5s ease-in-out infinite;
 }

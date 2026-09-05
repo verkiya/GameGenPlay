@@ -26,6 +26,7 @@ export const suggestions = [
   {
     label: "Voxel survival",
     icon: PickaxeIcon,
+    color: "text-green-400 border-green-400/50 bg-green-400/10 hover:border-zinc-500 hover:text-green-400",
     prompt:
       "A first-person voxel survival game on an island of chunky cube terrain — " +
       "grass, stone, sand, water — that generates differently every run. I can " +
@@ -38,6 +39,7 @@ export const suggestions = [
   {
     label: "Ink samurai duel",
     icon: BrushIcon,
+    color: "text-red-500 border-red-500/50 bg-red-500/10 hover:border-zinc-500 hover:text-red-500",
     prompt:
       "A one-on-one samurai duel rendered like wet ink on rice paper: white " +
       "background, black silhouettes, hard brush-stroke edges, a single red sun " +
@@ -50,6 +52,7 @@ export const suggestions = [
   {
     label: "Comic-book firefight",
     icon: ZapIcon,
+    color: "text-yellow-400 border-yellow-400/50 bg-yellow-400/10 hover:border-zinc-500 hover:text-yellow-400",
     prompt:
       "A third-person shooter that looks like a comic book page: flat cel-shaded " +
       "colours, thick black outlines on everything, halftone dots in the shadows. " +
@@ -61,6 +64,7 @@ export const suggestions = [
   {
     label: "Realistic battlefield",
     icon: PlaneIcon,
+    color: "text-slate-400 border-slate-400/50 bg-slate-400/10 hover:border-zinc-500 hover:text-slate-400",
     prompt:
       "A grounded military flight mission over a wide battlefield valley at dawn — " +
       "haze, long shadows, muted greens and greys, no cartoon colours. I fly a jet " +
@@ -73,6 +77,7 @@ export const suggestions = [
   {
     label: "Fight-first shooter",
     icon: CrosshairIcon,
+    color: "text-orange-500 border-orange-500/50 bg-orange-500/10 hover:border-zinc-500 hover:text-orange-500",
     prompt:
       "An arena shooter that rewards pushing forward instead of hiding. I have a " +
       "gun and a melee attack, and my health only refills when I finish a stunned " +
@@ -84,6 +89,7 @@ export const suggestions = [
   {
     label: "Jungle expedition drive",
     icon: CarIcon,
+    color: "text-emerald-500 border-emerald-500/50 bg-emerald-500/10 hover:border-zinc-500 hover:text-emerald-500",
     prompt:
       "A driving game through dense jungle in a beat-up expedition truck. Third " +
       "person, behind the truck, on a muddy track winding between huge trees with " +
@@ -95,6 +101,7 @@ export const suggestions = [
   {
     label: "Sunny kingdom platformer",
     icon: Gamepad2Icon,
+    color: "text-cyan-400 border-cyan-400/50 bg-cyan-400/10 hover:border-zinc-500 hover:text-cyan-400",
     prompt:
       "A cheerful 3D platformer in a bright storybook kingdom: rolling green hills, " +
       "candy-coloured castle towers, a big blue sky with fat clouds. I control a " +

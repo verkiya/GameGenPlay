@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { BookOpenIcon } from "lucide-react"
 import { AuthBackground } from "@/components/auth-background"
 
 const technologies = [
@@ -34,14 +35,15 @@ export default function AuthLayout({
         {/* Content */}
         <div className="mb-12 max-w-3xl flex-1 flex flex-col justify-center">
           <h1 className="mb-6 text-5xl leading-tight font-bold tracking-tight md:text-7xl drop-shadow-lg">
-            Build 3D games <br />
-            <span className="text-primary">with AI.</span>
+            <span className="animate-color-spectrum bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-orange-400 to-yellow-400">
+              Build 3D games
+            </span>
+            <br />
+            <span className="animate-gradient-shift bg-[length:200%_200%] bg-clip-text text-transparent bg-gradient-to-r from-[#EF4444] via-red-300 to-[#EF4444]">
+              with AI.
+            </span>
           </h1>
-          <p className="max-w-xl text-xl leading-relaxed text-zinc-300 drop-shadow">
-            Describe a game and watch it come to life. GameGenPlay is an agentic
-            three.js game builder that plans the scene, writes the code, and
-            streams playable worlds from plain English.
-          </p>
+
         </div>
 
         {/* Bottom Left Badges */}
@@ -66,13 +68,13 @@ export default function AuthLayout({
       <div className="absolute bottom-12 left-1/2 z-20 -translate-x-1/2">
         <Link
           href="/learnings"
-          className="group relative flex items-center gap-3 overflow-hidden rounded-full border border-white/10 bg-white/5 px-6 py-3 font-medium text-white shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)] backdrop-blur-xl transition-all duration-300 hover:bg-white/10 hover:shadow-[0_0_60px_-10px_rgba(255,255,255,0.4)]"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative flex items-center gap-3 overflow-hidden rounded-full border border-white/10 bg-white/10 px-6 py-3 font-medium text-white  backdrop-blur-xl transition-all duration-300 "
         >
           <span className="relative z-10 tracking-wide text-sm md:text-base">What I learned building GameGenPlay</span>
-          <svg className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-          <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          <BookOpenIcon className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 opacity-100" />
         </Link>
       </div>
     </div>

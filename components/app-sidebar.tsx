@@ -1,7 +1,7 @@
 "use client"
 
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
-import { CoinsIcon, MessageSquareIcon, SquarePenIcon } from "lucide-react"
+import { BookOpenIcon, CoinsIcon, MessageSquareIcon, SquarePenIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -87,7 +87,7 @@ export function AppSidebar({
                 </EmptyDescription>
               </Empty>
             ) : (
-              <SidebarMenu className="group-data-[collapsible=icon]:hidden">
+              <SidebarMenu className="gap-1 group-data-[collapsible=icon]:hidden">
                 {games.map((game) => (
                   <SidebarMenuItem key={game.id}>
                     <SidebarMenuButton
@@ -140,7 +140,7 @@ export function AppSidebar({
                         </EmptyDescription>
                       </Empty>
                     ) : (
-                      <SidebarMenu>
+                      <SidebarMenu className="gap-1">
                         {games.map((game) => (
                           <SidebarMenuItem key={game.id}>
                             <PopoverClose
@@ -167,6 +167,15 @@ export function AppSidebar({
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/learnings"}
+              render={<Link href="/learnings" target="_blank" rel="noopener noreferrer" />}
+            >
+              <BookOpenIcon />
+              <span>Learnings</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname === "/billing"}

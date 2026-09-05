@@ -57,10 +57,14 @@ export function GameMenu({
   gameId,
   title,
   trigger,
+  renderRenameButton = false,
 }: {
   gameId: string
   title: string
   trigger?: React.ReactElement
+  /** When true, the pencil/rename icon is rendered as a standalone button
+   *  beside the dropdown trigger instead of inside the dropdown menu. */
+  renderRenameButton?: boolean
 }) {
   const pathname = usePathname()
   const [dialog, setDialog] = useState<"rename" | "delete" | null>(null)
@@ -125,32 +129,53 @@ export function GameMenu({
 
   return (
     <>
-      <DropdownMenu>
-        {/* Named after the game rather than labelled "Game options", because
-            the sidebar puts one of these on every row and a screen reader
-            would otherwise read out a column of identical buttons. */}
-        <DropdownMenuTrigger
-          aria-label={`Options for ${title}`}
-          render={trigger ?? <Button variant="ghost" size="icon-sm" />}
+      {renderRenameButton && (
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Rename game"
+          onClick={() => openDialog("rename")}
         >
-          <EllipsisIcon />
-        </DropdownMenuTrigger>
-        {/* Anchored to the trigger's right edge, which is the window's — a menu
-            aligned the other way would hang off the screen. */}
-        <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem onClick={() => openDialog("rename")}>
-            <PencilLineIcon />
-            Rename
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            variant="destructive"
-            onClick={() => openDialog("delete")}
+          <PencilLineIcon className="size-4" />
+        </Button>
+      )}
+      {renderRenameButton ? (
+        <Button
+          variant="destructive"
+          size="icon-sm"
+          aria-label="Delete game"
+          onClick={() => openDialog("delete")}
+        >
+          <Trash2Icon className="size-4" />
+        </Button>
+      ) : (
+        <DropdownMenu>
+          {/* Named after the game rather than labelled "Game options", because
+              the sidebar puts one of these on every row and a screen reader
+              would otherwise read out a column of identical buttons. */}
+          <DropdownMenuTrigger
+            aria-label={`Options for ${title}`}
+            render={trigger ?? <Button variant="ghost" size="icon-sm" />}
           >
-            <Trash2Icon />
-            Move to trash
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <EllipsisIcon />
+          </DropdownMenuTrigger>
+          {/* Anchored to the trigger's right edge, which is the window's — a menu
+              aligned the other way would hang off the screen. */}
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem onClick={() => openDialog("rename")}>
+              <PencilLineIcon />
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => openDialog("delete")}
+            >
+              <Trash2Icon />
+              Move to trash
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
 
       {/* Controlled and rendered outside the menu, which is how a dialog is
           opened from one: the menu closes on click, taking anything inside it
