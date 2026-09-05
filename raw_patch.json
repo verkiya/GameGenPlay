@@ -1,0 +1,16 @@
+{
+  "billing": {
+    "organization_enabled": true,
+    "plans": [
+      {
+        "slug": "pro",
+        "name": "Pro",
+        "description": "Unlock premium features for your entire team. Ideal for growing studios and professional game creators.",
+        "amount": 999,
+        "currency": "usd",
+        "payer_type": "org",
+        "is_recurring": true
+      }
+    ]
+  }
+}
