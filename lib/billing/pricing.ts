@@ -41,19 +41,13 @@ type ModelRates = {
  * turn at zero.
  */
 export const MODEL_RATES = {
-  "claude-opus-5": {
-    input: perMillionTokens(5),
-    cacheRead: perMillionTokens(0.5),
-    cacheWrite: perMillionTokens(6.25),
-    output: perMillionTokens(25),
+  "claude-sonnet-4-5-20250929": {
+    input: perMillionTokens(3),
+    cacheRead: perMillionTokens(0.3),
+    cacheWrite: perMillionTokens(3.75),
+    output: perMillionTokens(15),
   },
-  "claude-sonnet-5": {
-    input: perMillionTokens(2),
-    cacheRead: perMillionTokens(0.2),
-    cacheWrite: perMillionTokens(2.5),
-    output: perMillionTokens(10),
-  },
-  "claude-haiku-4-5": {
+  "claude-haiku-4-5-20251001": {
     input: perMillionTokens(1),
     cacheRead: perMillionTokens(0.1),
     cacheWrite: perMillionTokens(1.25),

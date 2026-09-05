@@ -21,7 +21,7 @@ import {
 import { truncateTitle } from "@/lib/games/title"
 import { describeError, elapsed } from "@/lib/observability"
 
-const TITLE_MODEL = "claude-haiku-4-5"
+const TITLE_MODEL = "claude-haiku-4-5-20251001"
 
 /**
  * Names a game after the prompt it was created from.

@@ -18,7 +18,6 @@ import type { GameModelId } from "./model-catalog"
  * error, not an undefined model discovered at the top of someone's turn.
  */
 export const gameModels = {
-  "claude-opus-5": anthropic("claude-opus-5"),
-  "claude-sonnet-5": anthropic("claude-sonnet-5"),
-  "claude-haiku-4-5": anthropic("claude-haiku-4-5"),
+  "claude-sonnet-4-5-20250929": anthropic("claude-sonnet-4-5-20250929"),
+  "claude-haiku-4-5-20251001": anthropic("claude-haiku-4-5-20251001"),
 } satisfies Record<GameModelId, LanguageModel>
