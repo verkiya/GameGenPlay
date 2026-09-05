@@ -1,6 +1,7 @@
 "use client"
 
 import { useChat } from "@ai-sdk/react"
+import * as Sentry from "@sentry/nextjs"
 import type { ChatSessionPersistedState } from "@trigger.dev/sdk/chat"
 import { useTriggerChatTransport } from "@trigger.dev/sdk/chat/react"
 import {
@@ -8,16 +9,23 @@ import {
   isToolUIPart,
   lastAssistantMessageIsCompleteWithToolCalls,
 } from "ai"
-import type { DynamicToolUIPart, ToolUIPart, UIMessage } from "ai"
+import type {
+  DynamicToolUIPart,
+  ToolUIPart,
+  UIMessage,
+  UIMessageChunk,
+} from "ai"
 import {
   CheckIcon,
   CircleAlertIcon,
   CircleQuestionMarkIcon,
 } from "lucide-react"
 import Image from "next/image"
-import { useCallback, useEffect, useRef, useState } from "react"
+import Link from "next/link"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { ChatComposer } from "@/components/chat-composer"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { Marker, MarkerContent, MarkerIcon } from "@/components/ui/marker"
 import { Message, MessageAvatar, MessageContent } from "@/components/ui/message"
@@ -42,9 +50,11 @@ import {
 } from "@/components/ui/questionnaire"
 import { Spinner } from "@/components/ui/spinner"
 import {
-  mintChatAccessToken,
-  startChatSession,
-} from "@/lib/games/actions"
+  mintGameChatAccessToken,
+  startGameChatSession,
+} from "@/lib/games/chat-actions"
+import type { GameModelId } from "@/lib/games/model-catalog"
+import { describeError } from "@/lib/observability"
 import { cn } from "@/lib/utils"
 // Type-only: the agent module reaches the server bundle, never the browser.
 import type { gameChat } from "@/trigger/chat"
@@ -54,29 +64,83 @@ const ASK_PLAYER = "ask_player"
 
 export function ChatThread({
   gameId,
+  credits,
   initialMessages,
+  initialModelId,
   initialSession,
   onTurnComplete,
 }: {
   gameId: string
+  credits: bigint
   initialMessages: UIMessage[]
+  initialModelId: GameModelId
   initialSession?: ChatSessionPersistedState
   onTurnComplete: () => void
 }) {
   const [prompt, setPrompt] = useState("")
+  // The thread owns the choice from here on, because the thread is what sends
+  // the turns. It starts on whatever the home page picked, and a switch made
+  // here lives as long as the tab — nothing on the game records what it was
+  // built with, so a reload starts over from the URL.
+  const [modelId, setModelId] = useState<GameModelId>(initialModelId)
+
+  // Memoized because the transport re-reads this whenever its identity changes,
+  // and a fresh object literal every render would be a change every render.
+  const clientData = useMemo(() => ({ modelId }), [modelId])
+
   // There is no endpoint to point at — the transport talks to the chat agent
   // directly, and both callbacks are server actions so the browser never holds
   // an environment secret key. The chat id doubles as the game id the thread is
   // persisted under.
   const transport = useTriggerChatTransport<typeof gameChat>({
     task: "game-chat",
-    accessToken: ({ chatId }) => mintChatAccessToken(chatId),
+    accessToken: ({ chatId }) => mintGameChatAccessToken(chatId),
     startSession: ({ chatId, clientData }) =>
-      startChatSession({ chatId, clientData }),
+      startGameChatSession({ chatId, clientData }),
+    // Merged into every turn's metadata, and handed to `startSession` for the
+    // first one, so the agent reads the current pick rather than the one the
+    // thread opened on. The agent validates it against the same catalog.
+    clientData,
     // What the last turn persisted: the session token and the stream cursor, so
     // a fresh tab reconnects without a round-trip to create a session.
     sessions: initialSession ? { [gameId]: initialSession } : undefined,
   })
+
+  // The message a resumed stream might be continuing, read once. Only a thread
+  // that was already sitting on an agent message when the page rendered has
+  // one, and the resume happens on mount, so nothing that arrives later can
+  // change the answer.
+  const [resumedHeadId] = useState(() => {
+    const last = initialMessages.at(-1)
+
+    return last?.role === "assistant" ? last.id : undefined
+  })
+
+  // The transport `useChat` actually talks to: the one above, with the chunk
+  // that would erase the question the player just answered filtered out of a
+  // resumed stream. Everything else passes through untouched, and `handleStop`
+  // below still reaches for the real transport, which is where the session
+  // lives.
+  const chatTransport = useMemo(
+    () => ({
+      sendMessages: transport.sendMessages,
+      reconnectToStream: async (
+        options: Parameters<typeof transport.reconnectToStream>[0]
+      ) => {
+        const stream = await transport.reconnectToStream(options)
+
+        return stream && resumedHeadId
+          ? stream.pipeThrough(withoutContinuationOf(resumedHeadId))
+          : stream
+      },
+    }),
+    [transport, resumedHeadId]
+  )
+
+  // Read inside `onError`, which `useChat` holds from the render it was created
+  // in — reading `messages` there directly would report the thread as it was
+  // when the callback was made rather than when the turn failed.
+  const messageCount = useRef(0)
 
   const {
     messages,
@@ -84,10 +148,11 @@ export function ChatThread({
     addToolOutput,
     stop: stopStream,
     status,
+    error,
   } = useChat({
     id: gameId,
     messages: initialMessages,
-    transport,
+    transport: chatTransport,
     // Answering `ask_player` resolves the tool call the paused turn is sitting
     // on, and that answer is only useful to the agent if it goes back — this
     // submits the thread again the moment the last message has no tool call
@@ -107,7 +172,42 @@ export function ChatThread({
     // on an error, still leaves every file it wrote on disk — that is what the
     // player is running now, so it is what the preview should show.
     onFinish: onTurnComplete,
+    // A turn that dies — the run failing, the transport losing the stream,
+    // a token that could not be refreshed — settles the status back to ready
+    // and leaves the thread looking like the agent simply had nothing to say.
+    // Nothing else in the app sees this: the worker's own failure is logged on
+    // its side only when the run itself failed, and a transport error never
+    // gets that far.
+    onError: (error) => {
+      Sentry.logger.error(
+        Sentry.logger.fmt`Chat turn failed for game ${gameId}`,
+        {
+          "game.id": gameId,
+          "chat.messages": messageCount.current,
+          "chat.resumed": Boolean(initialSession),
+          ...describeError(error),
+        }
+      )
+
+      // The log says a turn failed; this says why, with a stack trace and the
+      // replay of the session it happened in attached.
+      Sentry.captureException(error, {
+        tags: { "game.id": gameId },
+      })
+    },
   })
+
+  // The balance as of the last server render, so this closes the composer
+  // before a turn is attempted rather than after one is refused. It cannot
+  // notice a balance emptied by the turn now streaming — `onTurnComplete`
+  // refreshes the page, and the agent refuses the next turn regardless.
+  const outOfCredits = credits <= 0n
+
+  // Synced in an effect rather than assigned during render, which is a ref
+  // write React's rules — rightly — refuse.
+  useEffect(() => {
+    messageCount.current = messages.length
+  }, [messages])
 
   // A game is created with its opening prompt already stored as the thread's
   // first message, so a new thread arrives with a user turn and no reply. Ask
@@ -122,10 +222,13 @@ export function ChatThread({
 
     submittedGameId.current = gameId
 
-    if (initialMessages.at(-1)?.role === "user") {
+    // A new game arrives with its opening prompt already stored, so without
+    // this guard an org with no credits would open every game it created
+    // straight into a refused turn.
+    if (!outOfCredits && initialMessages.at(-1)?.role === "user") {
       sendMessage()
     }
-  }, [gameId, initialMessages, sendMessage])
+  }, [gameId, initialMessages, sendMessage, outOfCredits])
 
   function handleSubmit(value: string) {
     sendMessage({ text: value })
@@ -169,19 +272,22 @@ export function ChatThread({
                 <MessageScrollerItem key={message.id} messageId={message.id}>
                   <Message align={message.role === "user" ? "end" : "start"}>
                     {message.role === "assistant" && (
-                      <MessageAvatar className="size-8 bg-transparent self-start rounded-lg">
+                      <MessageAvatar className="size-8 self-start rounded-lg bg-transparent">
                         <Image
                           src="/logo.svg"
-                          alt="GameGenPlay"
+                          alt="Sandbox"
                           width={32}
                           height={32}
                           className="size-8"
+                          style={{ width: "auto", height: "auto" }}
                         />
                       </MessageAvatar>
                     )}
                     <MessageContent>
                       <Bubble
-                        variant={message.role === "user" ? "secondary" : "ghost"}
+                        variant={
+                          message.role === "user" ? "secondary" : "ghost"
+                        }
                         align={message.role === "user" ? "end" : "start"}
                       >
                         {/* A turn arrives as alternating text and tool parts,
@@ -249,21 +355,84 @@ export function ChatThread({
           <MessageScrollerButton />
         </MessageScroller>
       </MessageScrollerProvider>
-      <div className="mx-auto w-full max-w-3xl shrink-0 px-4 pb-4">
+      <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 pb-4">
+        {/* Two ways to arrive here, and the balance is checked first because it
+            is the one that knows *why*: a turn refused before it started for
+            want of credits comes back as an ordinary error, and a Server Action
+            does not promise to deliver its message intact. Anything else that
+            went wrong says so in its own words. */}
+        {outOfCredits ? (
+          <Alert>
+            <CircleAlertIcon />
+            <AlertTitle>Out of credits</AlertTitle>
+            <AlertDescription>
+              <p>
+                Building a game spends credits, and this organization has none
+                left.{" "}
+                <Link href="/billing" className="underline underline-offset-4">
+                  Add more from the billing page
+                </Link>{" "}
+                to pick this game back up.
+              </p>
+            </AlertDescription>
+          </Alert>
+        ) : error ? (
+          <Alert>
+            <CircleAlertIcon />
+            <AlertTitle>That turn didn&apos;t finish</AlertTitle>
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
+        ) : null}
         <ChatComposer
           value={prompt}
           onValueChange={setPrompt}
           onSubmit={handleSubmit}
           onStop={handleStop}
-          isGenerating={status === "submitted" || status === "streaming"}
-          disabled={status !== "ready" || pendingQuestion}
+          modelId={modelId}
+          onModelChange={setModelId}
+          streaming={status === "submitted" || status === "streaming"}
+          disabled={status !== "ready" || pendingQuestion || outOfCredits}
           placeholder={
-            pendingQuestion ? "Pick an answer above…" : "Ask for a change…"
+            outOfCredits
+              ? "Out of credits"
+              : pendingQuestion
+                ? "Pick an answer above…"
+                : "Ask for a change…"
           }
         />
       </div>
     </div>
   )
+}
+
+/**
+ * Takes the chunk that would erase a message out of the stream a reload
+ * resumes.
+ *
+ * Answering an `ask_player` question doesn't open a new agent message: the
+ * agent carries on writing into the one that asked, so the turn it wakes
+ * opens by naming that message's id. A tab that reloads while that turn is
+ * running rejoins the stream part way through — from the cursor the *question*
+ * was saved at — and the AI SDK reads the id as "this is that message", then
+ * swaps the thread's copy for the one it has built out of the stream. That
+ * copy starts empty and only ever holds what arrived after the cursor, so the
+ * question, and the answer under it, are what the swap drops.
+ *
+ * Without the id the AI SDK stays on the one it generated itself, so the rest
+ * of the turn lands beside the question rather than on top of it. One turn
+ * reads as two messages until the next reload takes the merged one back off
+ * the row; nothing is lost either way.
+ */
+function withoutContinuationOf(messageId: string) {
+  return new TransformStream<UIMessageChunk, UIMessageChunk>({
+    transform(chunk, controller) {
+      if (chunk.type === "start" && chunk.messageId === messageId) {
+        return
+      }
+
+      controller.enqueue(chunk)
+    },
+  })
 }
 
 /** One line per tool call: what the agent is doing to the game, and how it went. */

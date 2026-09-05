@@ -1,43 +1,46 @@
 "use client"
 
-import { ArrowUpIcon, ChevronDownIcon, GripIcon, SquareIcon } from "lucide-react"
+import { ArrowUpIcon, SquareIcon } from "lucide-react"
 
+import { ModelPicker } from "@/components/model-picker"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
-
-const models = ["Kimi K3", "Claude Opus 5", "GPT-5", "Gemini 3 Pro"]
+import type { GameModelId } from "@/lib/games/model-catalog"
 
 export function ChatComposer({
   value,
   onValueChange,
   onSubmit,
-  disabled = false,
-  isGenerating = false,
   onStop,
+  modelId,
+  onModelChange,
+  streaming = false,
+  disabled = false,
   placeholder = "Describe the game you want to build…",
 }: {
   value: string
   onValueChange: (value: string) => void
   /** Receives the trimmed prompt; only called when it is non-empty. */
   onSubmit: (value: string) => void
-  disabled?: boolean
-  isGenerating?: boolean
+  /** Cancels the turn in flight. Required for the button to offer a stop. */
   onStop?: () => void
+  /** The model the next turn runs on, and the way to change it. */
+  modelId: GameModelId
+  onModelChange: (modelId: GameModelId) => void
+  /** A turn is in flight, so the submit button becomes a stop button. */
+  streaming?: boolean
+  disabled?: boolean
   placeholder?: string
 }) {
   const prompt = value.trim()
   const canSubmit = prompt.length > 0 && !disabled
+  // Stop replaces send rather than sitting beside it, so the one button in the
+  // corner always drives the turn: start it, then end it.
+  const canStop = streaming && Boolean(onStop)
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -71,32 +74,28 @@ export function ChatComposer({
           className="field-sizing-content max-h-48 min-h-10"
         />
         <InputGroupAddon align="block-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <InputGroupButton>
-                  <GripIcon />
-                  Kimi K3
-                  <ChevronDownIcon />
-                </InputGroupButton>
-              }
-            />
-            <DropdownMenuContent className="w-auto">
-              {models.map((model) => (
-                <DropdownMenuItem key={model}>{model}</DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {/* Base UI buttons default to `type="button"`. */}
-          <Button
-            type={isGenerating ? "button" : "submit"}
-            onClick={isGenerating ? onStop : undefined}
-            size="icon-lg"
-            disabled={!isGenerating && !canSubmit}
-            className="ml-auto rounded-full"
-          >
-            {isGenerating ? <SquareIcon className="fill-current" /> : <ArrowUpIcon />}
-          </Button>
+          <ModelPicker modelId={modelId} onModelChange={onModelChange} />
+          {/* Base UI buttons default to `type="button"`, so only send opts in. */}
+          {canStop ? (
+            <Button
+              size="icon-lg"
+              onClick={onStop}
+              aria-label="Stop generating"
+              className="ml-auto rounded-full"
+            >
+              <SquareIcon className="fill-current" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon-lg"
+              disabled={!canSubmit}
+              aria-label="Send message"
+              className="ml-auto rounded-full"
+            >
+              <ArrowUpIcon />
+            </Button>
+          )}
         </InputGroupAddon>
       </InputGroup>
     </form>

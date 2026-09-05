@@ -34,10 +34,7 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-node_modules
+.clerk/
 .neon
 
 .trigger
-
-# Sentry Config File
-.env.sentry-build-plugin

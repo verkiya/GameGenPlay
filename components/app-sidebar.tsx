@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+import { GameMenu } from "@/components/game-menu"
 import { Empty, EmptyDescription } from "@/components/ui/empty"
 import {
   Popover,
@@ -24,17 +25,23 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { formatCredits } from "@/lib/billing/format"
 import type { Game } from "@/lib/db/schema"
 
 export function AppSidebar({
   games,
+  credits,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { games: Game[] }) {
+}: React.ComponentProps<typeof Sidebar> & {
+  games: Game[]
+  credits: bigint
+}) {
   const pathname = usePathname()
 
   return (
@@ -46,12 +53,13 @@ export function AppSidebar({
         >
           <Image
             src="/logo.svg"
-            alt="GameGenPlay"
+            alt="Sandbox"
             width={20}
             height={20}
             className="size-5"
+            style={{ width: "auto", height: "auto" }}
           />
-          <span className="font-logo text-base">GameGenPlay</span>
+          <span className="font-logo text-base">Sandbox</span>
         </Link>
         <SidebarTrigger />
       </SidebarHeader>
@@ -88,6 +96,18 @@ export function AppSidebar({
                     >
                       <span>{game.title}</span>
                     </SidebarMenuButton>
+                    {/* The same menu the game's own header has. Rendered as a
+                        `SidebarMenuAction` so it sits inside the row rather
+                        than beside it: the row is a link, and a button nested
+                        in one would be a link that is sometimes not. Hidden
+                        until the row is hovered or focused — and, once the
+                        menu is open, kept visible by the trigger's
+                        `aria-expanded`. */}
+                    <GameMenu
+                      gameId={game.id}
+                      title={game.title}
+                      trigger={<SidebarMenuAction showOnHover />}
+                    />
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
@@ -148,11 +168,14 @@ export function AppSidebar({
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton
+              isActive={pathname === "/billing"}
+              render={<Link href="/billing" />}
+            >
               <CoinsIcon />
               <span>Credits</span>
             </SidebarMenuButton>
-            <SidebarMenuBadge>$1.00</SidebarMenuBadge>
+            <SidebarMenuBadge>{formatCredits(credits)}</SidebarMenuBadge>
           </SidebarMenuItem>
         </SidebarMenu>
         <div className="flex items-center justify-between gap-2 px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
