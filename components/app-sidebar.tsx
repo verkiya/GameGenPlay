@@ -87,7 +87,7 @@ export function AppSidebar({
                 </EmptyDescription>
               </Empty>
             ) : (
-              <SidebarMenu className="group-data-[collapsible=icon]:hidden">
+              <SidebarMenu className="gap-1 group-data-[collapsible=icon]:hidden">
                 {games.map((game) => (
                   <SidebarMenuItem key={game.id}>
                     <SidebarMenuButton
@@ -140,7 +140,7 @@ export function AppSidebar({
                         </EmptyDescription>
                       </Empty>
                     ) : (
-                      <SidebarMenu>
+                      <SidebarMenu className="gap-1">
                         {games.map((game) => (
                           <SidebarMenuItem key={game.id}>
                             <PopoverClose
