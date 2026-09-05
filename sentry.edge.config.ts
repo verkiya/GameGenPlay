@@ -3,24 +3,35 @@
 // Note that this config is unrelated to the Vercel Edge Runtime and is also required when running locally.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs"
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  dataCollection: {
+    // Prompts and game source flow through this app's request bodies, so they
+    // stay out of Sentry. Everything else uses the permissive defaults.
+    httpBodies: [],
+  },
+
+  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+
+  enableLogs: true,
 
   integrations: [
-    Sentry.captureConsoleIntegration({
-      levels: ["error", "warn"], // Capture console.error and console.warn
-    }),
+    Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
 
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
+  beforeSendLog: (log) => {
+    if (
+      process.env.NODE_ENV === "production" &&
+      (log.level === "trace" || log.level === "debug")
+    ) {
+      return null
+    }
+
+    log.attributes = { ...log.attributes, "service.name": "sandbox-edge" }
+
+    return log
   },
-})
+});

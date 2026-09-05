@@ -9,11 +9,26 @@ Sentry.init({
 
   // Add optional integrations for additional features
   integrations: [
-    Sentry.replayIntegration(),
-    Sentry.captureConsoleIntegration({
-      levels: ["error", "warn"], // Capture console.error and console.warn
+    Sentry.replayIntegration({
+      // Additional Replay configuration goes in here, for example:
+      maskAllText: true,
+      blockAllMedia: true,
     }),
+    Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
+
+  beforeSendLog: (log) => {
+    if (
+      process.env.NODE_ENV === "production" &&
+      (log.level === "trace" || log.level === "debug")
+    ) {
+      return null
+    }
+
+    log.attributes = { ...log.attributes, "service.name": "sandbox-browser" }
+
+    return log
+  },
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,

@@ -1,13 +1,6 @@
 import { additionalFiles } from "@trigger.dev/build/extensions/core";
 import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
 import { defineConfig } from "@trigger.dev/sdk";
-import * as Sentry from "@sentry/nextjs";
-
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  // Node.js environment doesn't need tracesSampleRate for basic error tracking, 
-  // but we can add it if we want to trace background jobs
-});
 
 export default defineConfig({
   project: "proj_atsnienvbfcdzytdpaqz",
@@ -26,9 +19,6 @@ export default defineConfig({
       factor: 2,
       randomize: true,
     },
-  },
-  onFailure: async (payload) => {
-    Sentry.captureException(payload.error);
   },
   dirs: ["trigger"],
   build: {

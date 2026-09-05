@@ -2,24 +2,38 @@
 // The config you add here will be used whenever the server handles a request.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs"
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  dataCollection: {
+    // Prompts and game source flow through this app's request bodies, so they
+    // stay out of Sentry. Everything else uses the permissive defaults.
+    httpBodies: [],
+  },
+
+  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+
+  // Attach local variable values to stack frames
+  includeLocalVariables: true,
+
+  enableLogs: true,
 
   integrations: [
-    Sentry.captureConsoleIntegration({
-      levels: ["error", "warn"], // Capture console.error and console.warn
-    }),
+    Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
 
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
+  beforeSendLog: (log) => {
+    if (
+      process.env.NODE_ENV === "production" &&
+      (log.level === "trace" || log.level === "debug")
+    ) {
+      return null
+    }
+
+    log.attributes = { ...log.attributes, "service.name": "sandbox-server" }
+
+    return log
   },
-})
+});
