@@ -229,3 +229,15 @@
 .animate-color-spectrum {
   animation: color-spectrum 4s linear infinite;
 }
+
+@keyframes border-shimmer {
+  0% { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 8px rgba(168, 85, 247, 0.15); }
+  25% { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 12px rgba(59, 130, 246, 0.2); }
+  50% { border-color: rgba(236, 72, 153, 0.5); box-shadow: 0 0 12px rgba(236, 72, 153, 0.2); }
+  75% { border-color: rgba(34, 211, 238, 0.5); box-shadow: 0 0 12px rgba(34, 211, 238, 0.2); }
+  100% { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 8px rgba(168, 85, 247, 0.15); }
+}
+
+.animate-border-shimmer {
+  animation: border-shimmer 2.5s ease-in-out infinite;
+}

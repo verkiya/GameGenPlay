@@ -28,9 +28,8 @@ export default async function Page() {
             <EmptyTitle className="text-2xl font-medium tracking-tight mt-2">
               What should we build today?
             </EmptyTitle>
-            <EmptyDescription className="text-zinc-400 max-w-[28rem] mx-auto text-[15px]/relaxed">
-              Build your own racers, shooters, puzzles and whole worlds using your
-              own words. If you can describe it, you can play it.
+            <EmptyDescription className="text-zinc-400 max-w-xl mx-auto text-[15px]/loose tracking-wide mt-2">
+              Describe a game and play it instantly.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="max-w-2xl gap-6">

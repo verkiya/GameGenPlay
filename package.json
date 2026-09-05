@@ -29,7 +29,7 @@
     "@sentry/nextjs": "^10.73.0",
     "@sentry/node": "^10.73.0",
     "@shadcn/react": "^0.3.0",
-    "@trigger.dev/sdk": "^4.5.16",
+    "@trigger.dev/sdk": "4.5.16",
     "ai": "^7.0.84",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -58,7 +58,7 @@
   "devDependencies": {
     "@sentry/esbuild-plugin": "^5.4.0",
     "@tailwindcss/postcss": "^4",
-    "@trigger.dev/build": "^4.5.16",
+    "@trigger.dev/build": "4.5.16",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
@@ -71,7 +71,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4",
-    "trigger.dev": "^4.5.16",
+    "trigger.dev": "4.5.16",
     "typescript": "^5"
   }
 }

@@ -62,7 +62,7 @@ export function ChatComposer({
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <InputGroup className="bg-popover">
+      <InputGroup className={`bg-popover transition-all ${disabled ? "animate-border-shimmer" : ""}`}>
         <InputGroupTextarea
           name="prompt"
           value={value}
