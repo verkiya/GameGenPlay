@@ -101,7 +101,7 @@ function createCrown(): THREE.Group {
   })
   const band = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.06, 8, 16), solidMat)
   band.rotation.x = Math.PI / 2; group.add(band)
-  group.add(new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.065, 8, 16), (() => { const m = mat.clone(); m.wireframe = true; return m })()).also = (m: THREE.Mesh) => { m.rotation.x = Math.PI / 2 })
+
   const bandW = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.065, 8, 16), mat)
   bandW.rotation.x = Math.PI / 2; group.add(bandW)
 
@@ -362,7 +362,7 @@ function createKey(): THREE.Group {
   // Handle (torus)
   const handle = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.03, 6, 12), mat)
   handle.position.y = 0.3; group.add(handle)
-  group.add(new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.035, 6, 12), wireMat).also = (m: THREE.Mesh) => { m.position.y = 0.3 })
+
   const handleW = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.035, 6, 12), wireMat)
   handleW.position.y = 0.3; group.add(handleW)
 
@@ -411,7 +411,7 @@ function createTrophy(): THREE.Group {
   // Cup (inverted cone + cylinder top)
   const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.1, 0.4, 8), mat)
   cup.position.y = 0.2; group.add(cup)
-  group.add(new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.11, 0.42, 8), wireMat).also = (m: THREE.Mesh) => { m.position.y = 0.2 })
+
   const cupW = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.11, 0.42, 8), wireMat)
   cupW.position.y = 0.2; group.add(cupW)
 

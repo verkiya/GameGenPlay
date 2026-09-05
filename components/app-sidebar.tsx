@@ -1,7 +1,7 @@
 "use client"
 
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
-import { CoinsIcon, MessageSquareIcon, SquarePenIcon } from "lucide-react"
+import { BookOpenIcon, CoinsIcon, MessageSquareIcon, SquarePenIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -167,6 +167,15 @@ export function AppSidebar({
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/learnings"}
+              render={<Link href="/learnings" />}
+            >
+              <BookOpenIcon />
+              <span>Learnings</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname === "/billing"}

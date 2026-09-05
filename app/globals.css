@@ -220,3 +220,12 @@
 .animate-gradient-shift {
   animation: gradient-shift 3s ease-in-out infinite;
 }
+
+@keyframes color-spectrum {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.animate-color-spectrum {
+  animation: color-spectrum 4s linear infinite;
+}

@@ -34,19 +34,15 @@ export default function AuthLayout({
         {/* Content */}
         <div className="mb-12 max-w-3xl flex-1 flex flex-col justify-center">
           <h1 className="mb-6 text-5xl leading-tight font-bold tracking-tight md:text-7xl drop-shadow-lg">
-            <span className="animate-text-shimmer bg-[length:300%_100%] bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-300 to-white">
+            <span className="animate-color-spectrum bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-orange-400 to-yellow-400">
               Build 3D games
             </span>
             <br />
-            <span className="animate-gradient-shift bg-[length:200%_200%] bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-orange-400 to-red-600">
+            <span className="animate-gradient-shift bg-[length:200%_200%] bg-clip-text text-transparent bg-gradient-to-r from-[#EF4444] via-red-300 to-[#EF4444]">
               with AI.
             </span>
           </h1>
-          <p className="max-w-xl text-xl leading-relaxed text-zinc-300 drop-shadow">
-            Describe a game and watch it come to life. GameGenPlay is an agentic
-            three.js game builder that plans the scene, writes the code, and
-            streams playable worlds from plain English.
-          </p>
+
         </div>
 
         {/* Bottom Left Badges */}
