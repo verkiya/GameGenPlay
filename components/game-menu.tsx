@@ -1,8 +1,9 @@
 "use client"
 
-import { EllipsisIcon, PencilLineIcon, Trash2Icon } from "lucide-react"
+import { EllipsisIcon, PencilLineIcon, Trash2Icon, TerminalIcon } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useState, useTransition } from "react"
+import { LogsModal } from "@/components/logs-modal"
 
 import {
   AlertDialog,
@@ -67,14 +68,14 @@ export function GameMenu({
   renderRenameButton?: boolean
 }) {
   const pathname = usePathname()
-  const [dialog, setDialog] = useState<"rename" | "delete" | null>(null)
+  const [dialog, setDialog] = useState<"rename" | "delete" | "logs" | null>(null)
   const [name, setName] = useState(title)
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
   // The box starts from what the game is called now, every time — a name
   // abandoned in a previous open should not come back on the next one.
-  function openDialog(next: "rename" | "delete") {
+  function openDialog(next: "rename" | "delete" | "logs") {
     setName(title)
     setError(null)
     setDialog(next)
@@ -130,14 +131,24 @@ export function GameMenu({
   return (
     <>
       {renderRenameButton && (
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Rename game"
-          onClick={() => openDialog("rename")}
-        >
-          <PencilLineIcon className="size-4" />
-        </Button>
+        <>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Live logs"
+            onClick={() => openDialog("logs")}
+          >
+            <TerminalIcon className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Rename game"
+            onClick={() => openDialog("rename")}
+          >
+            <PencilLineIcon className="size-4" />
+          </Button>
+        </>
       )}
       {renderRenameButton ? (
         <Button
@@ -162,6 +173,10 @@ export function GameMenu({
           {/* Anchored to the trigger's right edge, which is the window's — a menu
               aligned the other way would hang off the screen. */}
           <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem onClick={() => openDialog("logs")}>
+              <TerminalIcon />
+              Live Logs
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => openDialog("rename")}>
               <PencilLineIcon />
               Rename
@@ -252,6 +267,12 @@ export function GameMenu({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <LogsModal
+        gameId={gameId}
+        open={dialog === "logs"}
+        onOpenChange={(open) => setDialog(open ? "logs" : null)}
+      />
     </>
   )
 }

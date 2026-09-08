@@ -1,3 +1,4 @@
+import { metadata } from "@trigger.dev/sdk"
 import { chat, upsertIncomingMessage } from "@trigger.dev/sdk/ai"
 import { stepCountIs, streamText } from "ai"
 import { z } from "zod"
@@ -85,6 +86,8 @@ export const gameChat = chat.agent({
       "chat.appended_incoming": appended,
       duration_ms: elapsed(startedAt),
     })
+    
+    await metadata.append("logs", `Turn started with ${stored.length} messages (appended: ${appended})`)
 
     return stored
   },
@@ -199,6 +202,8 @@ export const gameChat = chat.agent({
       "chat.has_cursor": lastEventId !== undefined,
       duration_ms: elapsed(startedAt),
     })
+    
+    await metadata.append("logs", `Turn completed in ${elapsed(startedAt)}ms (${uiMessages.length} total messages)`)
   },
   // Resolved per turn rather than declared once, because the tools have to
   // write into this game's sandbox: the chat id is the game id, so each turn's
@@ -259,7 +264,12 @@ export const gameChat = chat.agent({
       // as it goes: the sidebar drops while the game is still being written,
       // and a turn that crashes or is stopped halfway has still paid for the
       // steps that ran. `onStepEnd`, not the deprecated `onStepFinish`.
-      onStepEnd: async ({ usage, response }) => {
+      onStepEnd: async ({ usage, response, text, toolCalls }) => {
+        await metadata.append(
+          "logs",
+          `Step finished. Generated ${usage.completionTokens} tokens, called ${toolCalls?.length || 0} tools.`
+        )
+
         if (!orgId) {
           return
         }
