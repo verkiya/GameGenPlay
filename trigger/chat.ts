@@ -267,7 +267,7 @@ export const gameChat = chat.agent({
       onStepEnd: async ({ usage, response, text, toolCalls }) => {
         await metadata.append(
           "logs",
-          `Step finished. Generated ${usage.completionTokens} tokens, called ${toolCalls?.length || 0} tools.`
+          `Step finished. Generated ${usage.outputTokens} tokens, called ${toolCalls?.length || 0} tools.`
         )
 
         if (!orgId) {
