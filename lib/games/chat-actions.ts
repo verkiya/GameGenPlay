@@ -3,6 +3,7 @@
 import * as Sentry from "@sentry/nextjs"
 import { auth as triggerAuth } from "@trigger.dev/sdk"
 import { chat, type ChatStartSessionParams } from "@trigger.dev/sdk/ai"
+import { runs } from "@trigger.dev/sdk/v3"
 
 import { hasCreditsToBuild, OUT_OF_CREDITS } from "@/lib/billing/ledger"
 import { authorizeGame } from "@/lib/games/authorize"
@@ -89,4 +90,46 @@ export async function mintGameChatAccessToken(chatId: string) {
     },
     expirationTime: "1h",
   })
+}
+
+/**
+ * Returns the most recent Trigger.dev run ID for this game's chat agent.
+ */
+export async function getGameRunId(chatId: string) {
+  await authorizeGame(chatId, "getGameRunId")
+
+  const { data } = await runs.list({
+    tag: `chat:${chatId}`,
+    limit: 1,
+  })
+
+
+  return data[0]?.id
+}
+
+/**
+ * Mints an access token scoped for reading a specific run in real-time.
+ */
+export async function mintGameRunAccessToken(chatId: string, runId: string) {
+  // We still authorize via the chatId (gameId) since the user owns the game.
+  await authorizeGame(chatId, "mintGameRunAccessToken")
+
+  return triggerAuth.createPublicToken({
+    scopes: {
+      read: { runs: runId },
+    },
+    expirationTime: "1h",
+  })
+}
+
+/**
+ * Completely cancels the currently active Trigger.dev run for the game's chat agent.
+ */
+export async function cancelGameRun(chatId: string) {
+  await authorizeGame(chatId, "cancelGameRun")
+
+  const runId = await getGameRunId(chatId)
+  if (runId) {
+    await runs.cancel(runId)
+  }
 }

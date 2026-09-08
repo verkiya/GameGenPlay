@@ -16,6 +16,7 @@ export function ChatComposer({
   onValueChange,
   onSubmit,
   onStop,
+  onCancelBuild,
   modelId,
   onModelChange,
   streaming = false,
@@ -28,6 +29,8 @@ export function ChatComposer({
   onSubmit: (value: string) => void
   /** Cancels the turn in flight. Required for the button to offer a stop. */
   onStop?: () => void
+  /** Completely cancels the underlying build run. */
+  onCancelBuild?: () => void
   /** The model the next turn runs on, and the way to change it. */
   modelId: GameModelId
   onModelChange: (modelId: GameModelId) => void
@@ -77,14 +80,27 @@ export function ChatComposer({
           <ModelPicker modelId={modelId} onModelChange={onModelChange} />
           {/* Base UI buttons default to `type="button"`, so only send opts in. */}
           {canStop ? (
-            <Button
-              size="icon-lg"
-              onClick={onStop}
-              aria-label="Stop generating"
-              className="ml-auto rounded-full"
-            >
-              <SquareIcon className="fill-current" />
-            </Button>
+            <div className="ml-auto flex gap-2">
+              {onCancelBuild && (
+                <Button
+                  variant="destructive"
+                  size="icon-lg"
+                  onClick={onCancelBuild}
+                  aria-label="Cancel build"
+                  className="rounded-full px-4 w-auto"
+                >
+                  Cancel build
+                </Button>
+              )}
+              <Button
+                size="icon-lg"
+                onClick={onStop}
+                aria-label="Stop generating"
+                className="rounded-full"
+              >
+                <SquareIcon className="fill-current" />
+              </Button>
+            </div>
           ) : (
             <Button
               type="submit"
