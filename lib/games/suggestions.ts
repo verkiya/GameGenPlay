@@ -6,6 +6,8 @@ import {
   GlobeIcon,
   PickaxeIcon,
   PlaneIcon,
+  RocketIcon,
+  SparklesIcon,
   ZapIcon,
 } from "lucide-react"
 
@@ -30,6 +32,20 @@ export const suggestions = [
     color: "text-purple-400 border-purple-400/50 bg-purple-400/10 hover:border-zinc-500 hover:text-purple-400",
     prompt:
       "Create an interactive 3D solar system. I want a massive, glowing yellow sun in the center with bloom effects. Add 3 distinct planets (one rocky, one gas giant, one ice) orbiting at different speeds and distances. Include thousands of background stars and OrbitControls so I can pan and zoom the camera.",
+  },
+  {
+    label: "Neon Grid Runner",
+    icon: RocketIcon,
+    color: "text-pink-400 border-pink-400/50 bg-pink-400/10 hover:border-zinc-500 hover:text-pink-400",
+    prompt:
+      "Build a 3D synthwave endless runner. Create a glowing neon-pink wireframe floor that constantly scrolls towards the camera. Add a sleek geometric hovercraft I can steer left and right with arrow keys to dodge incoming glowing cyan cubes. Keep it simple and focus on the visual aesthetic and smooth infinite scrolling.",
+  },
+  {
+    label: "Particle Sandbox",
+    icon: SparklesIcon,
+    color: "text-yellow-300 border-yellow-300/50 bg-yellow-300/10 hover:border-zinc-500 hover:text-yellow-300",
+    prompt:
+      "Make a 3D interactive particle physics sandbox. Create a transparent glass cube in the center. Inside, put 500 tiny glowing spheres that bounce around with gravity. When I click on the glass cube, make all the particles explode outward like a firework and bounce off the walls until they settle. Use simple Three.js physics.",
   },
   {
     label: "Voxel survival",
