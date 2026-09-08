@@ -1,4 +1,4 @@
-import { createRequire } from "node:module";
+import fs from "node:fs";
 import { join } from "node:path";
 
 import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
@@ -43,12 +43,9 @@ const daytonaExternal: BuildExtension = {
       { placement: "first", target: "deploy" },
     );
 
-    // An external is only half the fix — something has to install it. The
-    // version is read from the installed package rather than pinned here so a
-    // bump in package.json cannot silently deploy an older SDK than the one
     // this was typechecked against.
-    const require = createRequire(join(context.workingDir, "package.json"));
-    const { version } = require("@daytona/sdk/package.json");
+    const pkg = JSON.parse(fs.readFileSync(join(context.workingDir, "node_modules/@daytona/sdk/package.json"), "utf8"));
+    const version = pkg.version;
 
     context.addLayer({
       id: "daytona-external",
@@ -94,6 +91,7 @@ export default defineConfig({
           org: process.env.SENTRY_ORG,
           project: "gamegenplay",
           authToken: process.env.SENTRY_AUTH_TOKEN,
+          telemetry: false,
         }),
         { placement: "last", target: "deploy" },
       ),

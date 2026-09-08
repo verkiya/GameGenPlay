@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
 }
 
-export default withSentryConfig(nextConfig, {
+const sentryConfig = withSentryConfig(nextConfig, {
   org: "enra-r3",
   project: "gamegenplay",
 
@@ -24,4 +24,18 @@ export default withSentryConfig(nextConfig, {
   },
 
   silent: !process.env.CI,
+  telemetry: false,
 })
+
+export default async function config(...args: any[]) {
+  // @ts-expect-error withSentryConfig can return a function or object
+  const cfg = await (typeof sentryConfig === "function" ? sentryConfig(...args) : sentryConfig)
+  
+  // Sentry automatically injects clientTraceMetadata, which causes Next.js to log an
+  // "Experiments (use with caution)" warning. Remove it to keep the console clean.
+  if (cfg.experimental?.clientTraceMetadata) {
+    delete cfg.experimental.clientTraceMetadata
+  }
+  
+  return cfg
+}
