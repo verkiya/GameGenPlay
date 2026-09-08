@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/questionnaire"
 import { Spinner } from "@/components/ui/spinner"
 import {
+  cancelGameRun,
   mintGameChatAccessToken,
   startGameChatSession,
 } from "@/lib/games/chat-actions"
@@ -245,6 +246,15 @@ export function ChatThread({
     stopStream()
   }, [transport, gameId, stopStream])
 
+  const handleCancelBuild = useCallback(async () => {
+    try {
+      await cancelGameRun(gameId)
+      stopStream()
+    } catch (err) {
+      console.error("Failed to cancel build:", err)
+    }
+  }, [gameId, stopStream])
+
   // A question the agent is still waiting on. The turn paused on a tool call
   // with no result, so the thread can only move once that call is answered:
   // anything else sent now would ask the model to carry on from a question it
@@ -388,6 +398,7 @@ export function ChatThread({
           onValueChange={setPrompt}
           onSubmit={handleSubmit}
           onStop={handleStop}
+          onCancelBuild={handleCancelBuild}
           modelId={modelId}
           onModelChange={setModelId}
           streaming={status === "submitted" || status === "streaming"}

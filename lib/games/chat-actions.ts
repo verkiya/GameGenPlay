@@ -121,3 +121,15 @@ export async function mintGameRunAccessToken(chatId: string, runId: string) {
     expirationTime: "1h",
   })
 }
+
+/**
+ * Completely cancels the currently active Trigger.dev run for the game's chat agent.
+ */
+export async function cancelGameRun(chatId: string) {
+  await authorizeGame(chatId, "cancelGameRun")
+
+  const runId = await getGameRunId(chatId)
+  if (runId) {
+    await runs.cancel(runId)
+  }
+}

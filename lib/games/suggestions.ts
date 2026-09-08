@@ -3,6 +3,7 @@ import {
   CarIcon,
   CrosshairIcon,
   Gamepad2Icon,
+  GlobeIcon,
   PickaxeIcon,
   PlaneIcon,
   ZapIcon,
@@ -23,6 +24,13 @@ import {
  * have to settle what to build.
  */
 export const suggestions = [
+  {
+    label: "Cosmic Solar System",
+    icon: GlobeIcon,
+    color: "text-purple-400 border-purple-400/50 bg-purple-400/10 hover:border-zinc-500 hover:text-purple-400",
+    prompt:
+      "Create an interactive 3D solar system. I want a massive, glowing yellow sun in the center with bloom effects. Add 3 distinct planets (one rocky, one gas giant, one ice) orbiting at different speeds and distances. Include thousands of background stars and OrbitControls so I can pan and zoom the camera.",
+  },
   {
     label: "Voxel survival",
     icon: PickaxeIcon,

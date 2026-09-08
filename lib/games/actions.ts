@@ -46,7 +46,10 @@ async function generateTitle(prompt: string) {
     })
 
     // Models like to wrap a bare title in quotes even when told not to.
-    const title = text.trim().replace(/^["'“”]+|["'“”]+$/g, "")
+    let title = text.trim().replace(/^["'“”]+|["'“”]+$/g, "")
+    
+    // Sometimes models return the title wrapped in HTML tags (like <title>).
+    title = title.replace(/<\/?[^>]+(>|$)/g, "").trim()
 
     if (!title) {
       // The call came back, so this is the model answering with nothing rather
